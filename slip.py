@@ -44,6 +44,7 @@ class Enlace:
         self.linha_serial = linha_serial
         self.linha_serial.registrar_recebedor(self.__raw_recv)
         self.res = b''
+        self.char = False
 
     def registrar_recebedor(self, callback):
         self.callback = callback
@@ -83,6 +84,13 @@ class Enlace:
                     
                 self.res = b'' # Reseta 
             else:
-                if d == 0xDB:
-                    d = d.replace('\xDB\xDD', '\xDB')
-                self.res += bytes([d])
+                if d == 0xDB: # Char de escape (0xDB 0xDD)
+                    self.char = True
+                
+                elif self.char: # Se for um char de escape
+                    if d == 0xDC: self.res += bytes([0xC0])
+                    if d == 0xDD: self.res += bytes([0xDB])
+                    self.char = False
+                
+                else:
+                    self.res += bytes([d])
