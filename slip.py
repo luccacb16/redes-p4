@@ -83,4 +83,6 @@ class Enlace:
                     
                 self.res = b'' # Reseta 
             else:
+                if d == 0xDB:
+                    d = d.replace('\xDB\xDD', '\xDB')
                 self.res += bytes([d])
