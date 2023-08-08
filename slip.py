@@ -79,11 +79,17 @@ class Enlace:
         ''' Passo 3 '''
         for d in dados:
             if d == 0xC0: # Quando achar o byte 0xC0, envia para a camada superior
-                if self.res: # Se não for vazio
-                    self.callback(self.res)
-                    
-                self.res = b'' # Reseta 
+                if self.res:
+                    ''' Passo 5 '''
+                    try:
+                        self.callback(self.res)
+                    except:
+                        import traceback
+                        traceback.print_exc()
+                    finally:
+                        self.res = b''
             else:
+                ''' Passo 4 '''
                 if d == 0xDB: # Char de escape (0xDB 0xDD)
                     self.char = True
                 
